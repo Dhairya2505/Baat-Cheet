@@ -6,6 +6,7 @@
     "chat": "nodemon chat",
     "server": "nodemon server"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
