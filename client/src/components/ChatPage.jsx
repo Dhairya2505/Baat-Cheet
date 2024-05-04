@@ -1,8 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { io } from 'socket.io-client';
+import { BACKEND_CHAT_SERVER } from "../constants.js";
+import Cookies from 'js-cookie';
 
 const ChatAppPage = () => {
 
+    const navigate = useNavigate();
     const [message,setMessage] = useState('');
+    const [userNameTo,setUserNameTo] = useState('');
+    const [userNameFrom,setUserNameFrom] = useState('');
+    const location = useLocation();
+
+
+    const socket = useMemo(() => {
+        if(Cookies.get('BCC')){
+            return io(`${BACKEND_CHAT_SERVER}`,{
+                query : {
+                    token : Cookies.get('BCC')
+                }
+            });
+        }else{
+            return '';
+        }
+
+    },[]);
+
+    useEffect(() => {
+        const { ToUsername, FromUsername } = location.state || {};
+        if(ToUsername && FromUsername){
+            console.log(ToUsername, FromUsername);
+            setUserNameTo(ToUsername);
+            setUserNameFrom(FromUsername);
+        }
+        else{
+            navigate('/main');
+        }
+
+    })
 
     const sendMessage = () => {
         setMessage('');

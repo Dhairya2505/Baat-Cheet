@@ -24,6 +24,8 @@ const io = new Server(server,{
 let usernameToSocket = new Map();
 let socketToUsername = new Map();
 
+let chats = [];
+
 io.on("connection", async (socket) => {
 
     let token = (socket.handshake.query.token).split(' ')[1];

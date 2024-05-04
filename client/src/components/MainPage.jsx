@@ -39,10 +39,6 @@ const MainPage = () => {
             navigate('/signin');
         }
 
-        return () => {
-            socket.disconnect();
-        };
-
     },[])
     
     return (
@@ -64,7 +60,7 @@ const MainPage = () => {
                         users.map((element,index) => {
                             if(element[0] != username){
                                 return (
-                                    <div className="flex items-center text-white h-16 border-b p-2 border-white my-2 cursor-pointer" key={element[0]}>
+                                    <div className="flex items-center text-white h-16 border-b p-2 border-white my-2 cursor-pointer" key={element[0]} onClick={() => { navigate('/app',{ state : { ToUsername : element[0], FromUsername : username } }); }}>
                                         <div className="w-4/5">
                                             <div className="text-md">
                                                 {element[0]}
