@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "chat": "nodemon chat",
-    "server": "nodemon server"
+    "chat": "node chat",
+    "server": "node server"
   },
   "type": "module",
   "keywords": [],
