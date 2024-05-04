@@ -62,7 +62,9 @@ io.on("connection", async (socket) => {
             Message
         });
         console.log(Chats);
-        socket.to(Socket).emit("recieve-message",{ Message,usernamefrom, usernameto });
+        if(usernameto == user){
+            socket.to(Socket).emit("recieve-message",{ Message,usernamefrom, usernameto });
+        }
     })
 
     socket.on("disconnect", () => {

@@ -41,7 +41,7 @@ const SignInPage = () => {
     }
 
     return (
-        <div className="flex flex-col h-svh bg-black text-white">
+        <div className="flex flex-col min-h-screen bg-black text-white">
             <div className="container bg-black border-white border rounded-lg shadow-lg shadow-white mt-10 mx-auto px-5 py-10 w-80">
                 <h1 className="flex justify-center text-3xl font-bold mb-5 select-none">Sign Up</h1>
                 <div className="mb-4">

@@ -8,8 +8,6 @@ const ChatAppPage = () => {
 
     const navigate = useNavigate();
     const [message,setMessage] = useState('');
-    const [userNameTo,setUserNameTo] = useState('');
-    const [userNameFrom,setUserNameFrom] = useState('');
 
     const [chats,setChats] = useState([]);
 
@@ -33,20 +31,20 @@ const ChatAppPage = () => {
 
     useEffect(() => {
 
-        if(ToUsername && FromUsername){
-            setUserNameTo(ToUsername);
-            setUserNameFrom(FromUsername);
-        }else{
+        if(!(ToUsername && FromUsername)){
             navigate('/main');
         }
 
         socket.on("recieve-message",({ Message, usernamefrom, usernameto }) => {
-            setChats(prevChats => [...prevChats, { usernamefrom, usernameto, Message }]);
+            console.log(FromUsername, ToUsername);
+            console.log(usernamefrom, usernameto, Message);
+            if(usernamefrom == ToUsername && usernameto == FromUsername){
+                setChats(prevChats => [...prevChats, { usernamefrom, usernameto, Message }]);
+            }
         })
 
         socket.on("recieve-Chats", ({ onlyChats }) => {
             setChats(onlyChats);
-            console.log(onlyChats);
         })
         
         return () => {
@@ -56,23 +54,22 @@ const ChatAppPage = () => {
     },[]);
     
     const sendMessage = () => {
-        socket.emit("send-message",{ Message : message, usernamefrom:userNameFrom, usernameto:userNameTo });
-        setChats(prevChats => [...prevChats, { usernamefrom:userNameFrom, usernameto:userNameTo, Message:message }]);
+        socket.emit("send-message",{ Message : message, usernamefrom:FromUsername, usernameto:ToUsername });
+        setChats(prevChats => [...prevChats, { usernamefrom:FromUsername, usernameto:ToUsername, Message:message }]);
         setMessage('');
     }
 
     return (
         <div className="h-svh">
             <div className="fixed w-full flex text-3xl h-16 items-center justify-center font-serif text-white bg-black z-10 border border-white shadow-md shadow-white">
-                {userNameTo}
+                {ToUsername}
             </div>
 
             <div className="fixed pt-20 pb-24 flex flex-col p-5 bg-black/95 w-full h-full overflow-y-auto border border-white">
                 
                 {
                     chats.map((e,i) => {
-                        console.log(chats);
-                        if(e.usernamefrom == userNameFrom){
+                        if(e.usernamefrom == FromUsername){
                             return <div className="m-1 self-end bg-gray-400 p-2 rounded-md max-w-sm md:max-w-md lg:max-w-lg" key={i}>
                                 {`${e.Message}`}
                             </div>
