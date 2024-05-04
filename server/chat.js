@@ -45,8 +45,6 @@ io.on("connection", async (socket) => {
                 return e;
             }
         })
-        console.log(username, user);
-        console.log(onlyChats);
         io.to(socket.id).emit("recieve-Chats",{ onlyChats });
     }
 
@@ -61,7 +59,6 @@ io.on("connection", async (socket) => {
             usernameto,
             Message
         });
-        console.log(Chats);
         if(usernameto == user){
             socket.to(Socket).emit("recieve-message",{ Message,usernamefrom, usernameto });
         }

@@ -36,8 +36,6 @@ const ChatAppPage = () => {
         }
 
         socket.on("recieve-message",({ Message, usernamefrom, usernameto }) => {
-            console.log(FromUsername, ToUsername);
-            console.log(usernamefrom, usernameto, Message);
             if(usernamefrom == ToUsername && usernameto == FromUsername){
                 setChats(prevChats => [...prevChats, { usernamefrom, usernameto, Message }]);
             }
