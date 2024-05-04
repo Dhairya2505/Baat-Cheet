@@ -22,22 +22,24 @@ const MainPage = () => {
         }else{
             return '';
         }
-
     },[]); 
 
     useEffect(() => {
 
-        if(socket){
-            socket.on('getUsername' ,({ username }) => {
-                setUsername(username);
-            })
-            socket.on('getUsers',({ arr }) => {
-                setUsers(arr);
-            })
+        if(!socket){
+            navigate('/signin');   
         }
-        else{
-            navigate('/signin');
-        }
+
+        socket.on('getUsername' ,({ username }) => {
+            setUsername(username);
+        })
+        socket.on('getUsers',({ arr }) => {
+            setUsers(arr);
+        })
+
+        return () => {
+            socket.disconnect();
+        };
 
     },[])
     
