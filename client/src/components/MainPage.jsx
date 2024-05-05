@@ -11,6 +11,9 @@ const MainPage = () => {
     const navigate = useNavigate();
     const [users,setUsers] = useState([])
     const [username,setUsername] = useState('');
+    const [blur,setBlur] = useState(false);
+    const [create,setCreate] = useState(false);
+    const [join,setJoin] = useState(false);
 
     const socket = useMemo(() => {
         if(Cookies.get('BCC')){
@@ -42,9 +45,28 @@ const MainPage = () => {
         };
 
     },[])
+
+    const createRoom = () => {
+        setBlur(!blur);
+        setCreate(!create);
+    }
+
+    const joinRoom = () => {
+        setBlur(!blur);
+        setJoin(!join);
+    }
     
     return (
-        <div className="flex justify-center items-center h-svh w-svw bg-black">
+        <div className="flex justify-center items-center h-svh w-svw bg-black font-serif">
+
+            <div className="fixed flex text-white right-0 top-0 m-1">
+                <div className="w-20 flex justify-center items-center border border-white rounded-sm text-lg m-3 cursor-pointer" onClick={createRoom}>
+                    Create
+                </div>
+                <div className="w-20 flex justify-center items-center border border-white rounded-sm text-lg m-3 cursor-pointer" onClick={joinRoom}>
+                    Join
+                </div>
+            </div>
             <div className="h-3/4 border border-white rounded-lg p-5 shadow-lg shadow-white">
                 <div className="flex shadow-md shadow-white">
                     <div className="text-white">
@@ -74,7 +96,8 @@ const MainPage = () => {
                                         {
                                             element[1] && 
                                             <div className="flex justify-center items-center left-72 w-1/5">
-                                                <div className="p-2 rounded-full bg-green-500">
+                                                <div className="text-xs text-black font-bold px-1 rounded-full bg-green-500">
+                                                    Online
                                                 </div>
                                             </div>
                                         }
@@ -86,6 +109,58 @@ const MainPage = () => {
 
                 </div>
             </div>
+            {
+                blur && 
+                <div className="fixed min-h-screen min-w-full bg-black/90 z-10">
+                </div>
+            }
+
+            {
+                create && blur && 
+                <div className="fixed min-h-full min-w-full z-20 flex justify-center items-center">
+                    <form className="flex flex-col justify-center items-center shadow-lg shadow-white border border-white rounded-md w-1/2 bg-black">
+                        <input type="text" placeholder="Enter name" className="m-5 mt-10 outline-none rounded-md h-10 w-1/2 px-3 py-2 bg-black border border-white text-gray-300" />
+                        <div>
+                            <button className="px-2 py-1 m-2 mb-10 rounded-md border border-white hover:bg-gray-900 active:bg-gray-800 text-white select-none cursor-pointer" onClick={ (e) => {
+                                e.preventDefault();
+                            } }>
+                                Create room
+                            </button>
+                            <button className="px-2 py-1 m-2 mb-10 rounded-md border border-white hover:bg-gray-900 active:bg-gray-800 text-white select-none cursor-pointer" onClick={ (e) => {
+                                e.preventDefault();
+                                setCreate(!create);
+                                setBlur(!blur);
+                            } }>
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div> 
+            }
+            {
+                join && blur && 
+                <div className="fixed min-h-full min-w-full z-20 flex justify-center items-center">
+                    <form className="flex flex-col justify-center items-center border border-white rounded-md w-1/2 bg-black">
+                        <input type="text" placeholder="Enter room id" className="m-5 mt-10 outline-none rounded-md h-10 w-1/2 px-3 py-2 bg-black border border-white text-gray-300" />
+                        <div>
+                            <button className="px-2 py-1 m-2 mb-10 rounded-md border border-white hover:bg-gray-900 active:bg-gray-800 text-white select-none cursor-pointer" onClick={ (e) => {
+                                e.preventDefault();
+                            } }>
+                                Join room
+                            </button>
+                            <button className="px-2 py-1 m-2 mb-10 rounded-md border border-white hover:bg-gray-900 active:bg-gray-800 text-white select-none cursor-pointer" onClick={ (e) => {
+                                e.preventDefault();
+                                setJoin(!join);
+                                setBlur(!blur);
+                            } }>
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div> 
+            }
+
+
         </div>
     )
 }

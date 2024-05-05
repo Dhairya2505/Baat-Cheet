@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { io } from 'socket.io-client';
 import { BACKEND_CHAT_SERVER } from "../constants.js";
 import Cookies from 'js-cookie';
+import { IoIosArrowBack } from "react-icons/io";
 
 const ChatAppPage = () => {
 
@@ -52,8 +53,11 @@ const ChatAppPage = () => {
     },[]);
 
     return (
-        <div className="h-svh">
-            <div className="fixed w-full flex text-3xl h-16 items-center justify-center font-serif text-white bg-black z-10 border border-white shadow-md shadow-white">
+        <div className="h-svh font-serif">
+            <div className="fixed w-full flex text-3xl h-16 items-center font-serif text-white bg-black z-10 border border-white shadow-md shadow-white">
+                <div className="p-5 mr-9">
+                    <IoIosArrowBack className="cursor-pointer" onClick={ () => { navigate('/main') } } />
+                </div>
                 {ToUsername}
             </div>
 
