@@ -1,1 +1,1 @@
-export const FRONTEND_URI = 'https://baat-cheet-zeta.vercel.app'
+export const FRONTEND_URI = 'http://localhost:5173'

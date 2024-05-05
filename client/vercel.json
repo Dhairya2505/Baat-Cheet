@@ -1,7 +1,0 @@
-{
-    "version": 2,
-    "buildCommand": "vite build",
-    "rewrites": [
-      { "source": "/((?!api/.*).*)", "destination": "/dist/index.html" }
-    ]
-}
