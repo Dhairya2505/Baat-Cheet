@@ -1,56 +1,65 @@
-import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import Cookies from 'js-cookie';
 import { io } from 'socket.io-client';
 import { BACKEND_CHAT_SERVER } from "../constants.js";
-import Cookies from 'js-cookie';
+
 import { IoIosArrowBack } from "react-icons/io";
 
-const ChatAppPage = () => {
+const RoomChatPage = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
     const [message,setMessage] = useState('');
 
     const [chats,setChats] = useState([]);
+    const [roomname,setRoomname] = useState('');
 
-    const location = useLocation();
+    const { id, roomName } = location.state || {};
 
-    const { ToUsername, FromUsername } = location.state || {};
+    useEffect(() => {
+        if(!(id)){
+            navigate('/main');
+        }
+    },[]);
 
     const socket = useMemo(() => {
+        setRoomname(roomName);
         if(Cookies.get('BCC')){
             return io(`${BACKEND_CHAT_SERVER}`,{
                 query : {
                     token : Cookies.get('BCC'),
-                    usernameTo : ToUsername
+                    id: id,
+                    roomName
                 }
             });
         }else{
             return '';
         }
-
     },[]);
 
     useEffect(() => {
-
-        if(!(ToUsername && FromUsername)){
-            navigate('/main');
+        if(!socket){
+            navigate('/main');   
         }
 
-        socket.on("recieve-message",({ Message, usernamefrom, usernameto }) => {
-            if(usernamefrom == ToUsername && usernameto == FromUsername){
-                setChats(prevChats => [...prevChats, { usernamefrom, usernameto, Message }]);
-            }
+        socket.on("roomCreated", ({ id, socketId }) => {
+            console.log("room id : ",id, socketId);
+        });
+
+        socket.on("userJoined",({ username }) => {
+            console.log( username, "joined" );
         })
 
-        socket.on("recieve-Chats", ({ onlyChats }) => {
-            setChats(onlyChats);
+        socket.on("roomName" ,({ NameofRoom }) => {
+            setRoomname(NameofRoom);
         })
-        
+
         return () => {
             socket.disconnect();
         };
-        
-    },[]);
+
+    },[])
 
     return (
         <div className="h-svh font-serif">
@@ -58,14 +67,14 @@ const ChatAppPage = () => {
                 <div className="p-5 mr-9">
                     <IoIosArrowBack className="cursor-pointer" onClick={ () => { navigate('/main') } } />
                 </div>
-                {ToUsername}
+                {roomName || roomname} &nbsp; <span className="text-base">{id}</span>
             </div>
 
             <div className="fixed pt-20 pb-24 flex flex-col p-5 bg-black/95 w-full h-full overflow-y-auto border border-white">
                 {
                     
                     chats.map((e,i) => {
-                        if(e.usernamefrom == FromUsername){
+                        if(e.usernamefrom == ""){
                              return (<div className="m-1 self-end bg-gray-400 p-2 rounded-md max-w-sm md:max-w-md lg:max-w-lg" key={i}>
                                 {`${e.Message}`}
                             </div>)
@@ -87,8 +96,6 @@ const ChatAppPage = () => {
             <form onSubmit={ (e) => {
                 e.preventDefault();
                 if(message){
-                    socket.emit("send-message",{ Message : message, usernamefrom:FromUsername, usernameto:ToUsername });
-                    setChats(prevChats => [...prevChats, { usernamefrom:FromUsername, usernameto:ToUsername, Message:message }]);
                     setMessage('');
                 }
             } } className="fixed bottom-0 w-full flex h-20 items-center justify-center bg-black border border-white">
@@ -99,4 +106,4 @@ const ChatAppPage = () => {
     )
 }
 
-export default ChatAppPage;
+export default RoomChatPage;

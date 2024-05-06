@@ -4,6 +4,7 @@ import SignUpPage from './components/SignUp.jsx';
 import SignInPage from './components/SignIn.jsx';
 import MainPage from './components/MainPage.jsx';
 import ChatAppPage from './components/ChatPage.jsx';
+import RoomChatPage from './components/RoomChatPage.jsx';
 
 export default function App(){
     return (
@@ -13,6 +14,7 @@ export default function App(){
                 <Route path='/signin' element={<SignInPage />} />
                 <Route path='/main' element={<MainPage />} />
                 <Route path='/app' element={<ChatAppPage />} />
+                <Route path='/room' element={<RoomChatPage />} />
             </Routes>
         </BrowserRouter>
     )

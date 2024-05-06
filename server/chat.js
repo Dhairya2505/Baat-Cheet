@@ -26,11 +26,37 @@ let socketToUsername = new Map();
 
 let Chats = [];
 
+
+let roomMembers = [];
+
 io.on("connection", async (socket) => {
 
     let token = (socket.handshake.query.token).split(' ')[1];
-    const user = socket.handshake.query.usernameTo;
     const username = await jwt.verify(token,SECRET_KEY).username;
+    const user = socket.handshake.query.usernameTo;
+
+    const id = socket.handshake.query.id;
+    const roomName = socket.handshake.query.roomName;
+    if(roomName != "undefined" && id){
+        roomMembers.push({
+            socketId: socket.id,
+            roomId: id,
+            roomName: roomName,
+            members:[username]
+        })
+        io.to(socket.id).emit("roomCreated",{ id, socketId: socket.id });
+    }
+    else if(id){
+        const room = roomMembers.map((e,i) => {
+            if(e.roomId == id){
+                e.members.push(username);
+                socket.broadcast.emit("userJoined" , { username });
+                io.to(socket.id).emit("roomName",{ NameofRoom: e.roomName });;
+            }
+        })
+    }
+
+
     if(usernameToSocket.get(username)){
         const Socket = usernameToSocket[username];
         delete socketToUsername[Socket];

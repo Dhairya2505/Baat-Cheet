@@ -3,6 +3,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import { io } from 'socket.io-client';
 import { BACKEND_CHAT_SERVER } from "../constants.js";
 import Cookies from 'js-cookie';
+import { nanoid } from 'nanoid'
 
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +14,9 @@ const MainPage = () => {
     const [username,setUsername] = useState('');
     const [blur,setBlur] = useState(false);
     const [create,setCreate] = useState(false);
+    const [roomname, setRoomname] = useState('');
     const [join,setJoin] = useState(false);
+    const [roomid, setRoomid] = useState('');
 
     const socket = useMemo(() => {
         if(Cookies.get('BCC')){
@@ -119,10 +122,14 @@ const MainPage = () => {
                 create && blur && 
                 <div className="fixed min-h-full min-w-full z-20 flex justify-center items-center">
                     <form className="flex flex-col justify-center items-center shadow-lg shadow-white border border-white rounded-md w-1/2 bg-black">
-                        <input type="text" placeholder="Enter name" className="m-5 mt-10 outline-none rounded-md h-10 w-1/2 px-3 py-2 bg-black border border-white text-gray-300" />
+                        <input type="text" value={roomname} onChange={ e => setRoomname(e.target.value) } placeholder="Enter name" className="m-5 mt-10 outline-none rounded-md h-10 w-1/2 px-3 py-2 bg-black border border-white text-gray-300" />
                         <div>
                             <button className="px-2 py-1 m-2 mb-10 rounded-md border border-white hover:bg-gray-900 active:bg-gray-800 text-white select-none cursor-pointer" onClick={ (e) => {
                                 e.preventDefault();
+                                if(roomname){
+                                    const id = nanoid(20);
+                                    navigate('/room', { state: { id:id, roomName : roomname } } )
+                                }
                             } }>
                                 Create room
                             </button>
@@ -141,10 +148,13 @@ const MainPage = () => {
                 join && blur && 
                 <div className="fixed min-h-full min-w-full z-20 flex justify-center items-center">
                     <form className="flex flex-col justify-center items-center border border-white rounded-md w-1/2 bg-black">
-                        <input type="text" placeholder="Enter room id" className="m-5 mt-10 outline-none rounded-md h-10 w-1/2 px-3 py-2 bg-black border border-white text-gray-300" />
+                        <input type="text" value={roomid} onChange={ e => setRoomid(e.target.value) } placeholder="Enter room id" className="m-5 mt-10 outline-none rounded-md h-10 w-1/2 px-3 py-2 bg-black border border-white text-gray-300" />
                         <div>
                             <button className="px-2 py-1 m-2 mb-10 rounded-md border border-white hover:bg-gray-900 active:bg-gray-800 text-white select-none cursor-pointer" onClick={ (e) => {
                                 e.preventDefault();
+                                if(roomid){
+                                    navigate('/room', { state: { id:roomid } } );
+                                }
                             } }>
                                 Join room
                             </button>
