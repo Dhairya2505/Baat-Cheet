@@ -12,6 +12,9 @@ const RoomChatPage = () => {
     const location = useLocation();
     const [message,setMessage] = useState('');
 
+    const [userName, setUsername] = useState('');
+    const [Socket, setsocketId] = useState('');
+
     const [chats,setChats] = useState([]);
     const [roomname,setRoomname] = useState('');
 
@@ -43,16 +46,25 @@ const RoomChatPage = () => {
             navigate('/main');   
         }
 
-        socket.on("roomCreated", ({ id, socketId }) => {
-            console.log("room id : ",id, socketId);
-        });
-
-        socket.on("userJoined",({ username }) => {
-            console.log( username, "joined" );
+        socket.on("getSocket",({ socketId }) => {
+            setsocketId(socketId);
         })
 
-        socket.on("roomName" ,({ NameofRoom }) => {
+        socket.on("getUsername" ,({ username }) => {
+            console.log(username);
+            setUsername(username);
+        })
+
+        // socket.on("userJoined",({ username }) => {
+        // })
+
+        socket.on("roomName" ,({ NameofRoom, socketid }) => {
             setRoomname(NameofRoom);
+            setsocketId(socketid);
+        })
+
+        socket.on("recieveRoom-message", ({ Message, username }) => {
+            setChats(prevChats => [...prevChats, { from:username, Message }]);
         })
 
         return () => {
@@ -74,7 +86,7 @@ const RoomChatPage = () => {
                 {
                     
                     chats.map((e,i) => {
-                        if(e.usernamefrom == ""){
+                        if(e.from == userName){
                              return (<div className="m-1 self-end bg-gray-400 p-2 rounded-md max-w-sm md:max-w-md lg:max-w-lg" key={i}>
                                 {`${e.Message}`}
                             </div>)
@@ -82,7 +94,7 @@ const RoomChatPage = () => {
                         else{
                             return (<div className="m-1 self-start bg-gray-300 p-2 rounded-md max-w-sm md:max-w-md lg:max-w-lg" key={i}>
                                 <div className="text- font-bold font-serif">
-                                    {e.usernamefrom}
+                                    {e.from}
                                 </div>
                                 <div className="font-serif pl-1">
                                     {e.Message}
@@ -96,7 +108,9 @@ const RoomChatPage = () => {
             <form onSubmit={ (e) => {
                 e.preventDefault();
                 if(message){
+                    socket.emit("sendRoom-message",{ Message : message, username : userName, Socket});
                     setMessage('');
+
                 }
             } } className="fixed bottom-0 w-full flex h-20 items-center justify-center bg-black border border-white">
                 <input type="text" value={message} onChange={ (e) => { setMessage(e.target.value) } } className="shadow-sm shadow-white outline-none text-gray-200 w-full p-2 h-12 rounded-lg my-2 ml-2 mr-1 border border-white bg-black" />

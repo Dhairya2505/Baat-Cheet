@@ -44,14 +44,17 @@ io.on("connection", async (socket) => {
             roomName: roomName,
             members:[username]
         })
-        io.to(socket.id).emit("roomCreated",{ id, socketId: socket.id });
+        console.log(roomMembers);
+        io.to(socket.id).emit("getSocket", { socketId:socket.id })
     }
     else if(id){
         const room = roomMembers.map((e,i) => {
             if(e.roomId == id){
                 e.members.push(username);
+                socket.join(e.socketId);
                 socket.broadcast.emit("userJoined" , { username });
-                io.to(socket.id).emit("roomName",{ NameofRoom: e.roomName });;
+                console.log(roomMembers);
+                io.to(socket.id).emit("roomName",{ NameofRoom: e.roomName, socketid:e.socketId });;
             }
         })
     }
@@ -77,6 +80,10 @@ io.on("connection", async (socket) => {
     io.to(socket.id).emit('getUsername',{ username });
     io.emit('getUsers',{ arr : Object.entries(usernameToSocket) });
 
+    socket.on("sendRoom-message", ({ Message, username, Socket }) => {
+        console.log(Message, username, Socket);
+        io.to(Socket).emit("recieveRoom-message", { Message, username });
+    })
     
     socket.on("send-message",({ Message, usernamefrom, usernameto }) => {
         let Socket = usernameToSocket[usernameto];

@@ -87,7 +87,7 @@ const ChatAppPage = () => {
             <form onSubmit={ (e) => {
                 e.preventDefault();
                 if(message){
-                    socket.emit("send-message",{ Message : message, usernamefrom:FromUsername, usernameto:ToUsername });
+                    io.emit("send-message",{ Message : message, usernamefrom:FromUsername, usernameto:ToUsername });
                     setChats(prevChats => [...prevChats, { usernamefrom:FromUsername, usernameto:ToUsername, Message:message }]);
                     setMessage('');
                 }
