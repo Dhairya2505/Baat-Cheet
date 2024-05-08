@@ -42,21 +42,19 @@ io.on("connection", async (socket) => {
             socketId: socket.id,
             roomId: id,
             roomName: roomName,
-            members:[username]
         })
         console.log(roomMembers);
         io.to(socket.id).emit("getSocket", { socketId:socket.id })
     }
     else if(id){
-        const room = roomMembers.map((e,i) => {
+        roomMembers.map((e,i) => {
             if(e.roomId == id){
-                e.members.push(username);
                 socket.join(e.socketId);
                 socket.broadcast.emit("userJoined" , { username });
-                console.log(roomMembers);
                 io.to(socket.id).emit("roomName",{ NameofRoom: e.roomName, socketid:e.socketId });;
             }
         })
+        console.log(roomMembers);
     }
 
 

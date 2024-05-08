@@ -67,6 +67,10 @@ const RoomChatPage = () => {
             setChats(prevChats => [...prevChats, { from:username, Message }]);
         })
 
+        socket.on('disconnect', () => {
+            navigate('/main');
+        });
+
         return () => {
             socket.disconnect();
         };
